@@ -101,6 +101,8 @@ class Graph:
             current_v = queue.pop(0)
             
             # O(|E|) traverse every edge
+            # Nested for loop does not multiply complexity
+            # Vertices are processed only if they are unvisited
             for u in self.adj_list[current_v]:
                 
                 if u.get('status') == 'u':
@@ -147,6 +149,8 @@ class Graph:
         # O(|V|) visit every vertex
         for current_v in self.id_to_v.values():
             if current_v.get('status') == 'u':
+                # Running DFSVisit it for loop does not multiply complexity
+                # Vertices are processed only if they are unvisited
                 time = self.DFSVisit(current_v, time)
 
 # UndirectedGraph class, inherits Graph methods
@@ -247,3 +251,31 @@ class DirectedGraph(Graph):
                 time = GT.DFSVisit(current_v, time, scc=True, scc_list=scc_tab[len(scc_tab) - 1])
         # Output vertices in each tree of the DF forest as a SCC
         return scc_tab
+
+    # Initializes the graph for a SSSP execution
+    def init_SS(self, s):
+        for v in self.id_to_v.values():
+            v.set('d',inf)
+            v.set('pi',None)
+        s.set('d',0)
+
+    # Checks the current shortest path and replaces with new weight if smaller
+    def relax(self, u, v, w):
+        if v.get('d') > (u.get('d') + w):
+            v.set('d',u.get('d') + w)
+            v.set('pi',u.get('id'))
+
+    # Returns True if the SSSP algorithm suceeded
+    # Returns False if the graph has a negative cycle and SSSP is invalid
+    # Adds 'pi' (parent vertex) and 'd' (shortest path weight) attributes to all vertices
+    def SSSP(self, W, s):
+        self.init_SS(s)
+        for i in range(len(self.id_to_v.values())):
+            for u, arr_v in self.adj_list.items():
+                for v in arr_v:
+                    self.relax(u,v,W.get_weight(u,v))
+        for u, arr_v in self.adj_list.items():
+            for v in arr_v:
+                if v.get('d') > (u.get('d') + W.get_weight(u,v)):
+                    return False
+        return True

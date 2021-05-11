@@ -53,10 +53,20 @@ def create_graph_4():
 
     return G, W
 
-G4, W4 = create_graph_4()
-print(G4.str_edges())
-print(W4)
-G4.MST(W4,G4.id_to_v['a'])
-print(G4)
-G4.MST(W4,G4.id_to_v['b'])
-print(G4)
+def create_graph_5():
+    G = DirectedGraph()
+    W = Weights()
+
+    for i in ['a','b','c','d','e','f']:
+        G.add_vertex(Vertex(i))
+
+    for (v1,v2,w) in [('a','b',1),('b','c',2),('b','d',2),('c','f',1),('d','a',1),('e','b',1),('f','f',3)]:
+        G.add_edge(G.id_to_v[v1],G.id_to_v[v2])
+        G.set_weight(W,G.id_to_v[v1],G.id_to_v[v2],w)
+
+    return G, W
+
+G5, W5 = create_graph_5()
+G5.SSSP(W5, G5.id_to_v['e'])
+print(G5.str_edges())
+print(G5)
